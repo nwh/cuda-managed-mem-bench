@@ -23,3 +23,53 @@ the cost of the sort and run length encode.
 * number of samples
 * number of segments
 
+## 2016-02-02 Experiments
+
+Compile time:
+
+```
+$ time make mybench
+nvcc -gencode arch=compute_35,code=sm_35 -o mybench mybench.cu -I./cub-1.5.1 -lcurand
+
+real	0m34.425s
+user	0m33.612s
+sys	0m0.776s
+$ time make mybench_managed
+nvcc -gencode arch=compute_35,code=sm_35 -o mybench_managed mybench_managed.cu -I./cub-1.5.1 -lcurand
+
+real	0m34.849s
+user	0m34.032s
+sys	0m0.792s
+```
+
+Run without any called to `cudaMallocManaged`:
+
+```
+$ ./mybench
+Thrust v1.8
+seed: 1235
+num_items: 131072
+num_samples: 5000
+num_segments: 9
+rng_time: 2.51756e-05
+cub_time: 0.000513044
+thrust_time: 0.00138256
+--- end of my bench ---
+```
+
+Run with calls to `cudaMallocManaged`:
+
+```
+$ ./mybench_managed 
+Thrust v1.8
+seed: 1235
+num_items: 131072
+num_samples: 5000
+num_segments: 9
+rng_time: 2.5168e-05
+rng_managed_time: 0.000119185
+cub_time: 0.000919785
+cub_managed_time: 0.000920232
+thrust_time: 0.0130265
+--- end of my bench ---
+```
