@@ -110,11 +110,11 @@ int main() {
   /// temporary storage
   void* rle_temp_storage = NULL;
   size_t rle_storage_bytes = 0;
-  cub::DeviceReduce::RunLengthEncode(rle_temp_storage, rle_storage_bytes, keys_dbuf.Current(),
+  cub::DeviceRunLengthEncode::Encode(rle_temp_storage, rle_storage_bytes, keys_dbuf.Current(),
                                      keys_cmp, keys_cnt, num_segments, num_items);
   cudaMalloc(&rle_temp_storage,rle_storage_bytes);
   /// perform rle
-  cub::DeviceReduce::RunLengthEncode(rle_temp_storage, rle_storage_bytes, keys_dbuf.Current(),
+  cub::DeviceRunLengthEncode::Encode(rle_temp_storage, rle_storage_bytes, keys_dbuf.Current(),
                                      keys_cmp, keys_cnt, num_segments, num_items);
 
   // look at results

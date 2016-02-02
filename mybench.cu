@@ -130,7 +130,7 @@ double bench_cub(const unsigned long long seed,
   // allocate temp storage for run length encode
   void* temp_rle = NULL;
   size_t temp_rle_bytes = 0;
-  cub::DeviceReduce::RunLengthEncode(temp_rle, temp_rle_bytes, keys_dbuf.Current(),
+  cub::DeviceRunLengthEncode::Encode(temp_rle, temp_rle_bytes, keys_dbuf.Current(),
                                      keys_compact, keys_counts, keys_num, num_items);
   cudaMalloc(&temp_rle,temp_rle_bytes);
   
@@ -162,7 +162,7 @@ double bench_cub(const unsigned long long seed,
     cub::DeviceRadixSort::SortPairs(temp_sort, temp_sort_bytes, keys_dbuf,
                                     vals_dbuf, num_items);
     // reduce
-    cub::DeviceReduce::RunLengthEncode(temp_rle, temp_rle_bytes, keys_dbuf.Current(),
+    cub::DeviceRunLengthEncode::Encode(temp_rle, temp_rle_bytes, keys_dbuf.Current(),
                                        keys_compact, keys_counts, keys_num, num_items);
     // read number of segments
     keys_num_host = keys_num_ptr[0];

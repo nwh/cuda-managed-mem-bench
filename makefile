@@ -1,24 +1,16 @@
+NVCC := nvcc
+NVCCFLAGS := -gencode arch=compute_30,code=sm_30
+NVCCLIBS := -I./cub-1.5.1 -lcurand
+
 mycub: mycub.cu
-	nvcc -gencode arch=compute_30,code=sm_30 $^ -o $@ -lcurand \
-		-I./cub-1.5.1
+	$(NVCC) $(NVCCFLAGS) -o $@ $< $(NVCCLIBS)
 
 mybench: mybench.cu
-	nvcc -gencode arch=compute_30,code=sm_30 $^ -o $@ -lcurand \
-		-I./cub-1.5.1
-
-mygtod: mygtod.cu
-	nvcc -gencode arch=compute_30,code=sm_30 $^ -o $@
-
-mythrust: mythrust.cu
-	nvcc -gencode arch=compute_30,code=sm_30 $^ -o $@
+	$(NVCC) $(NVCCFLAGS) -o $@ $< $(NVCCLIBS)
 
 .PHONY: run_mycub
 run_mycub: mycub
 	./mycub
-
-.PHONY: run_thrust
-run_mythrust: mythrust
-	./mythrust
 
 .PHONY: clean
 clean:
