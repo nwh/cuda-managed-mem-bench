@@ -142,7 +142,7 @@ double bench_cub(const unsigned long long seed,
   cudaMalloc(&keys_compact,num_items*sizeof(*keys_compact));
   cudaMalloc(&keys_counts,num_items*sizeof(*keys_counts));
   cudaMalloc(&keys_num,sizeof(*keys_num));
-  
+
   // create double buffers
   cub::DoubleBuffer<int> keys_dbuf(keys,keys_alt);
   cub::DoubleBuffer<int> vals_dbuf(vals,vals_alt);
@@ -160,7 +160,7 @@ double bench_cub(const unsigned long long seed,
   cub::DeviceRunLengthEncode::Encode(temp_rle, temp_rle_bytes, keys_dbuf.Current(),
                                      keys_compact, keys_counts, keys_num, num_items);
   cudaMalloc(&temp_rle,temp_rle_bytes);
-  
+
   // thrust device pointers
   thrust::device_ptr<int> vals_ptr = thrust::device_pointer_cast(vals);
   thrust::device_ptr<int> keys_compact_ptr = thrust::device_pointer_cast(keys_compact);
@@ -173,7 +173,7 @@ double bench_cub(const unsigned long long seed,
 
   // number of segments (host-side)
   int keys_num_host = 0;
-  
+
   // start timing the loop
   timeval_t start;
   gettimeofday(&start,NULL);
@@ -213,7 +213,7 @@ double bench_cub(const unsigned long long seed,
   cudaFree(keys_num);
   cudaFree(temp_sort);
   cudaFree(temp_rle);
-  
+
   // compute elapsed time and return the average time
   double eltm = elapsed_time(start,finish);
   return eltm / num_samples;
@@ -242,7 +242,7 @@ double bench_cub_managed(const unsigned long long seed,
   cudaMallocManaged(&keys_compact,num_items*sizeof(*keys_compact));
   cudaMallocManaged(&keys_counts,num_items*sizeof(*keys_counts));
   cudaMallocManaged(&keys_num,sizeof(*keys_num));
-  
+
   // create double buffers
   cub::DoubleBuffer<int> keys_dbuf(keys,keys_alt);
   cub::DoubleBuffer<int> vals_dbuf(vals,vals_alt);
@@ -260,7 +260,7 @@ double bench_cub_managed(const unsigned long long seed,
   cub::DeviceRunLengthEncode::Encode(temp_rle, temp_rle_bytes, keys_dbuf.Current(),
                                      keys_compact, keys_counts, keys_num, num_items);
   cudaMallocManaged(&temp_rle,temp_rle_bytes);
-  
+
   // thrust device pointers
   thrust::device_ptr<int> vals_ptr = thrust::device_pointer_cast(vals);
   thrust::device_ptr<int> keys_compact_ptr = thrust::device_pointer_cast(keys_compact);
@@ -273,7 +273,7 @@ double bench_cub_managed(const unsigned long long seed,
 
   // number of segments (host-side)
   int keys_num_host = 0;
-  
+
   // start timing the loop
   timeval_t start;
   gettimeofday(&start,NULL);
@@ -313,7 +313,7 @@ double bench_cub_managed(const unsigned long long seed,
   cudaFree(keys_num);
   cudaFree(temp_sort);
   cudaFree(temp_rle);
-  
+
   // compute elapsed time and return the average time
   double eltm = elapsed_time(start,finish);
   return eltm / num_samples;
@@ -336,13 +336,13 @@ double bench_thrust(const unsigned long long seed,
   // host vectors
   thrust::host_vector<int> keys_compact_host(num_items);
   thrust::host_vector<int> keys_counts_host(num_items);
-  
+
   // raw pointers
   int* keys_raw = thrust::raw_pointer_cast(keys.data());
 
   // number of compacted keys
   size_t keys_num_host = 0;
-  
+
   // start timing the loop
   timeval_t start;
   gettimeofday(&start,NULL);
@@ -370,7 +370,7 @@ double bench_thrust(const unsigned long long seed,
 
   // cleanup the rng
   curandDestroyGenerator(gen);
-  
+
   // compute elapsed time and return the average time
   double eltm = elapsed_time(start,finish);
   return eltm / num_samples;
@@ -394,22 +394,25 @@ int main() {
   cout << "num_items: " << num_items << endl;
   cout << "num_samples: " << num_samples << endl;
   cout << "num_segments: " << num_segments << endl;
-  
+
   double rng_time = bench_rng(seed,num_items,num_samples,num_segments);
-  cout << "rng_time: " << rng_time << endl;
+  cout << "rng_time(1): " << rng_time << endl;
 
   double rng_managed_time = bench_rng_managed(seed,num_items,num_samples,num_segments);
   cout << "rng_managed_time: " << rng_managed_time << endl;
-  
+
+  rng_time = bench_rng(seed,num_items,num_samples,num_segments);
+  cout << "rng_time(2): " << rng_time << endl;
+
   double cub_time = bench_cub(seed,num_items,num_samples,num_segments);
   cout << "cub_time: " << cub_time << endl;
 
   double cub_managed_time = bench_cub_managed(seed,num_items,num_samples,num_segments);
   cout << "cub_managed_time: " << cub_managed_time << endl;
-  
+
   double thrust_time = bench_thrust(seed,num_items,num_samples,num_segments);
   cout << "thrust_time: " << thrust_time << endl;
-  
+
   cout << "--- end of my bench ---" << endl;
   cudaDeviceReset();
 }

@@ -103,3 +103,26 @@ thrust_time: 0.0165671
 --- end of my bench ---
 $ 
 ```
+
+## 2016-02-02 Update
+
+All code seems to run slower after using `cudaMallocManaged`!
+
+```
+$ ./mybench_managed 
+Thrust v1.8
+seed: 1235
+num_items: 131072
+num_samples: 5000
+num_segments: 9
+rng_time(1): 2.51796e-05
+rng_managed_time: 0.000119629
+rng_time(2): 0.000120445
+cub_time: 0.000986438
+cub_managed_time: 0.000923436
+thrust_time: 0.0151882
+--- end of my bench ---
+```
+
+Here: `rng_time(1)` and `rng_time(2)` are the same function run before and after
+`rng_managed_time` respectively.
