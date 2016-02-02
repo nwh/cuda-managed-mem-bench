@@ -23,7 +23,7 @@ the cost of the sort and run length encode.
 * number of samples
 * number of segments
 
-## 2016-02-02 Experiments
+## 2016-02-02 Experiments (workstation)
 
 Compile time:
 
